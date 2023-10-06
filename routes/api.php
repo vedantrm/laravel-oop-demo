@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Order\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,17 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 
 Route::group([
+    'middleware' => 'api',
     'prefix' => 'order'
-], function () {
-    Route::post('add', 'App\Http\Controllers\OrderController@store');
-    Route::get('list', 'App\Http\Controllers\OrderController@index');
-    Route::get('show/{id}', 'App\Http\Controllers\OrderController@show');
-    Route::put('update/{id}', 'App\Http\Controllers\OrderController@update');
-    Route::delete('delete/{id}', 'App\Http\Controllers\OrderController@destroy');
+], function ($router) {
+    Route::post('add', 'App\Http\Controllers\Order\OrderController@store');
+    Route::get('list', 'App\Http\Controllers\Order\OrderController@index');
+    Route::get('show/{id}', 'App\Http\Controllers\Order\OrderController@show');
+    Route::put('update/{id}', 'App\Http\Controllers\Order\OrderController@update');
+    Route::delete('delete/{id}', 'App\Http\Controllers\Order\OrderController@destroy');
 });
