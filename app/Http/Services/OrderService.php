@@ -3,20 +3,29 @@
 namespace App\Http\Services;
 
 use App\Models\Order\Order;
-use Illuminate\Support\Facades\Log;
+use App\Models\Order\OrderShippingBillingDetail;
 use App\Http\Actions\Order\CreateOrder;
 
-use App\Models\Order\OrderBillingDetail;
-use App\Models\Order\OrderShippingDetail;
-
 /**
- * Service to create an order    
+ * Service to create an order, assign order to shipping and billing details and calculate order totals if line items are available
+ * Utilizes the CreateOrder action
+ * @method createNewOrder
+ * @method assignOrderToShippingDetail
+ * @method assignOrderToBillingDetail
+ * @method calculateDraftOrder
  */
 
 class OrderService
 {
     public function __construct(private CreateOrder $createOrder) {}
 
+
+    /**
+     * Create a new order
+     * Utilizes the CreateOrder action and calculates order totals if line items are available
+     * @param array $data
+     * @return Collection<Order>
+     */
     public function createNewOrder(array $data): Order
     {
         $calculatedOrder = [];
@@ -25,45 +34,42 @@ class OrderService
         if(array_key_exists('order_line_items', $data) && count($data['order_line_items']) > 0) {
             $calculatedOrder = $this->calculateDraftOrder($data['order_line_items'], $data['shipping_handling_total']);
         }
-
         // Create Order with order items and totals   
         $order = $this->createOrder->execute($data, $calculatedOrder);
 
         // Assign order id to shipping detail
         if(isset($data['order_shipping_detail_id'])) {
-            $this->assignOrderToShippingDetail($data['order_shipping_detail_id'], $order->id);
+            $this->assignOrderToShippingBillingDetail($data['order_shipping_detail_id'], $order->id);
         }
-
         // Assign order id to billing detail
         if(isset($data['order_billing_detail_id'])) {
-            $this->assignOrderToBillingDetail($data['order_billing_detail_id'], $order->id);
+            $this->assignOrderToShippingBillingDetail($data['order_billing_detail_id'], $order->id);
         }
-
         // Event to send email to customer
-        // Observor to send email to admin
+        // Observor to send email to admin  
 
         return $order;
     }
 
 
-    private function assignOrderToShippingDetail($orderShippingDetailId, $orderId)
+    /**
+     * Assign order id to shipping detail
+     * @param int $orderShippingBillingDetailId
+     * @param int $orderId
+     * @return void
+     * @log error
+     */
+    private function assignOrderToShippingBillingDetail($orderShippingBillingDetailId, $orderId)
     {
-        try {
-            $orderShippingDetail = OrderShippingDetail::find($orderShippingDetailId)->update(['order_id' => $orderId]);
-        } catch(\Exception $e) {
-            Log::error('Failed to assign order to shipping detail' . $e->getMessage());
-        }
+        OrderShippingBillingDetail::find($orderShippingBillingDetailId)->update(['order_id' => $orderId]);
     }   
 
-    private function assignOrderToBillingDetail($orderBillingDetailId, $orderId)
-    {
-        try {
-            $orderBillingDetail = OrderBillingDetail::find($orderBillingDetailId)->update(['order_id' => $orderId]);
-        } catch(\Exception $e) {
-            Log::error('Failed to assign order to billing detail' . $e->getMessage());
-        }
-    }
-
+    /**
+     * Calculate order totals
+     * @param array $lineItems
+     * @param float $shippingHandlingTotal
+     * @return array
+     */
     private function calculateDraftOrder(array $lineItems, $shippingHandlingTotal): array
     {
         $discount = 0;

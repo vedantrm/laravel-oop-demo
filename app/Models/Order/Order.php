@@ -2,33 +2,31 @@
 
 namespace App\Models\Order;
 
-use App\Models\Order\OrderLineItem;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Order\OrderShippingDetail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Uuids;
 
+/**
+ * Model to store order details
+ * @uses trait Uuids to generate UUIDs
+ * @method hasMany orderLineItems
+ * @method hasOne orderShippingDetail
+ */
 class Order extends Model
 {
-    use HasFactory;
-
+    use Uuids;
     protected $table = 'order';
     protected $primaryKey = 'id';
-    protected $fillable = ['uuid'];
+    protected $fillable = ['uuid', 'status', 'payment_status', 'customer_note', 'contact_name', 'contact_email', 'sub_total', 'discount_total', 'shipping_handling_total', 'grand_total'];
     protected $guarded = ['id'];
 
-    public function orderLineItem()
+    public function orderLineItems()
     {
-        return $this->hasMany(OrderLineItem::class, 'order_id', 'id');
+        return $this->hasMany('App\Models\Order\OrderLineItem', 'order_id', 'id');
     }
 
-    public function orderShippingDetail()
+    public function orderShippingBillingDetail()
     {
-        return $this->hasOne(OrderShippingDetail::class, 'order_id', 'id');
-    }
-
-    public function orderBillingDetail()
-    {
-        return $this->hasOne(OrderBillingDetail::class, 'order_id', 'id');
+        return $this->hasMany('App\Models\Order\OrderShippingBillingDetail', 'order_id', 'id');
     }
 
 }

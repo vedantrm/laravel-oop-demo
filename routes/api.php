@@ -1,8 +1,6 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Order\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,14 +13,9 @@ use App\Http\Controllers\Order\OrderController;
 |
 */
 
-
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'order'
 ], function ($router) {
-    Route::post('add', 'App\Http\Controllers\Order\OrderController@store');
-    Route::get('list', 'App\Http\Controllers\Order\OrderController@index');
-    Route::get('show/{id}', 'App\Http\Controllers\Order\OrderController@show');
-    Route::put('update/{id}', 'App\Http\Controllers\Order\OrderController@update');
-    Route::delete('delete/{id}', 'App\Http\Controllers\Order\OrderController@destroy');
+   Route::resource('orders', 'App\Http\Controllers\Order\OrderController');
+   Route::resource('orders/order-shipping-billing-details', 'App\Http\Controllers\Order\OrderShippingBillingDetailController');
 });

@@ -16,12 +16,12 @@ return new class extends Migration
             $table->uuid('uuid')->index();
             $table->bigInteger('order_id')->unsigned()->nullable();
             $table->foreign('order_id')->references('id')->on('order')->onDelete('cascade');
-            $table->string('name');
-            $table->integer('quantity');
-            $table->string('sku');
-            $table->float('price');
-            $table->float('discount');
-            $table->float('total');
+            $table->string('name')->default('');
+            $table->integer('quantity')->default(0);
+            $table->string('sku')->default('');
+            $table->float('price')->default(0);
+            $table->float('discount')->default(0);
+            $table->float('total')->default(0);
             $table->timestamps();
         });
     }

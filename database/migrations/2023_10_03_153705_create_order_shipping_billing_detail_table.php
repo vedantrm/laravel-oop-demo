@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_shipping_detail', function (Blueprint $table) {
+        Schema::create('order_shipping_billing_detail', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->index();
             $table->bigInteger('order_id')->unsigned()->nullable();
@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('contact_phone');
             $table->string('contact_alt_no')->nullable();
             $table->string('contact_email');
+            $table->enum('type', ['shipping', 'billing'])->default('shipping');
             $table->string('address_line_1');
             $table->string('address_line_2')->nullable();
             $table->string('address_line_3')->nullable();

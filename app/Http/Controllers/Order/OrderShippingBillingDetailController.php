@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\CreateOrderRequest;
-use App\Http\Services\OrderService;
 use Illuminate\Http\Request;
+use App\Http\Requests\Order\CreateOrderShippingBillingDetailRequest;
+use App\Http\Services\OrderShippingBillingDetailService;
 
-
-class OrderController extends Controller
+class OrderShippingBillingDetailController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,14 +27,11 @@ class OrderController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @param CreateOrderRequest $request
-     * @param OrderService $orderService
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateOrderRequest $request, OrderService $orderService)
+    public function store(CreateOrderShippingBillingDetailRequest $request, OrderShippingBillingDetailService $OrderShippingBillingDetailService)
     {
-        $order = $orderService->createNewOrder($request->validated());
-        return response()->json($order, 201);
+        $OrderShippingBillingDetail = $OrderShippingBillingDetailService->createNewOrderShippingBillingDetail($request->validated());
+        return response()->json($OrderShippingBillingDetail, 201);
     }
 
     /**

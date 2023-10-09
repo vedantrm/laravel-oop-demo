@@ -1,26 +1,24 @@
 <?php
 namespace App\Http\Actions\Order;
 
-use App\Models\OrderLineItem;
-use Illuminate\Support\Str;
+use App\Models\Order\OrderLineItem;
+
 /**
  * Action to create an order line item    
  */
 
  class CreateOrderLineItem
  {
-     public function execute(array $orderLineItemData): OrderLineItem
-     {
-         $orderLineItem = OrderLineItem::create([
-             'uuid' => Str::orderedUuid(),
-             'order_id' => $orderLineItemData['order_id'] ?? null,
-             'product_id' => $orderLineItemData['product_id'],
-             'quantity' => $orderLineItemData['quantity'],
-             'price' => $orderLineItemData['price'],
-             'discount' => $orderLineItemData['discount'],
-             'total' => $orderLineItemData['total']
-         ]);
+     public function execute(array $data): OrderLineItem
+     {  
+        $orderLineItem = new OrderLineItem;
+        $orderLineItem->name = $data['name'];
+        $orderLineItem->quantity = $data['quantity'];
+        $orderLineItem->price = $data['price'];
+        $orderLineItem->discount = $data['discount'];
+        $orderLineItem->total = $data['total'];
+        $orderLineItem->save();
          
-         return $orderLineItem;
+        return $orderLineItem;
      }
  }
