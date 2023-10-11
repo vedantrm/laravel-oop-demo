@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Order\CreateOrderShippingBillingDetailRequest;
 use App\Http\Services\OrderShippingBillingDetailService;
+use Illuminate\Http\Response;
 
 class OrderShippingBillingDetailController extends Controller
 {
@@ -31,7 +32,8 @@ class OrderShippingBillingDetailController extends Controller
     public function store(CreateOrderShippingBillingDetailRequest $request, OrderShippingBillingDetailService $OrderShippingBillingDetailService)
     {
         $OrderShippingBillingDetail = $OrderShippingBillingDetailService->createNewOrderShippingBillingDetail($request->validated());
-        return response()->json($OrderShippingBillingDetail, 201);
+        $message = 'Order '. $OrderShippingBillingDetail->type .' details created successfully';
+        return $this->apiResponse($OrderShippingBillingDetail, Response::HTTP_CREATED, $message);
     }
 
     /**

@@ -6,25 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\CreateOrderRequest;
 use App\Http\Services\OrderService;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
 
 class OrderController extends Controller
-{
+{   
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, OrderService $orderService)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        
+    }   
 
     /**
      * Store a newly created resource in storage.
@@ -35,7 +27,8 @@ class OrderController extends Controller
     public function store(CreateOrderRequest $request, OrderService $orderService)
     {
         $order = $orderService->createNewOrder($request->validated());
-        return response()->json($order, 201);
+        $message = 'Order created successfully with status '. $order->status;
+        return $this->apiResponse($order, Response::HTTP_CREATED, $message);
     }
 
     /**

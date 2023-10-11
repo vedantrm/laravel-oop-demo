@@ -3,8 +3,9 @@
 namespace App\Http\Services;
 
 use App\Models\Order\Order;
-use App\Models\Order\OrderShippingBillingDetail;
 use App\Http\Actions\Order\CreateOrder;
+use App\Models\Order\OrderShippingBillingDetail;
+use App\Http\Resources\OrderResource;
 
 /**
  * Service to create an order, assign order to shipping and billing details and calculate order totals if line items are available
@@ -18,7 +19,6 @@ use App\Http\Actions\Order\CreateOrder;
 class OrderService
 {
     public function __construct(private CreateOrder $createOrder) {}
-
 
     /**
      * Create a new order
@@ -41,6 +41,7 @@ class OrderService
         if(isset($data['order_shipping_detail_id'])) {
             $this->assignOrderToShippingBillingDetail($data['order_shipping_detail_id'], $order->id);
         }
+        
         // Assign order id to billing detail
         if(isset($data['order_billing_detail_id'])) {
             $this->assignOrderToShippingBillingDetail($data['order_billing_detail_id'], $order->id);
@@ -50,7 +51,6 @@ class OrderService
 
         return $order;
     }
-
 
     /**
      * Assign order id to shipping detail

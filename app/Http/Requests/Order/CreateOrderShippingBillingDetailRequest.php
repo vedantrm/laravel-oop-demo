@@ -7,12 +7,14 @@ use Illuminate\Validation\Rules\Enum;
 use App\Enums\ShippingBillingType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Traits\ApiResponses;
 
 /**
  * Request to create an order shipping and billing detail
  */
 class CreateOrderShippingBillingDetailRequest extends FormRequest
 {
+    use ApiResponses;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -56,11 +58,11 @@ class CreateOrderShippingBillingDetailRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
 
-        $response = response()->json([
-            'success' => false,
-            'message' => 'Ops! Some errors occurred',
-            'errors' => $validator->errors()
-        ]);            
+        $response = $this->validatorErrorResponse(
+            200,
+            $validator->errors()
+        );       
+        
         throw (new ValidationException($validator, $response))
             ->errorBag($this->errorBag);
     }
